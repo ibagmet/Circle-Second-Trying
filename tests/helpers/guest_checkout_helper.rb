@@ -1,5 +1,23 @@
 module GuestCheckoutHelper
 
+  def guest_checkout_workflow(item_type, use_billing_address)
+    logout
+
+    add_item_to_cart if item_type.include? 'physical'
+    add_digital_item_to_cart if item_type.include? 'digital'
+
+    begin_checkout
+    checkout_as_guest
+    input_guest_addresses(use_billing_address)
+
+    select_delivery if item_type.include? 'physical'
+
+    pay_with_credit_card
+    confirm_order
+    verify_successful_order
+  end
+
+
   def checkout_as_guest
     assert (browser.url == "#{base_url}/checkout/registration"), "url should be /checkout/registration"
 

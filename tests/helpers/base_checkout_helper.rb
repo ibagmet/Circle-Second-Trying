@@ -7,6 +7,13 @@ module BaseCheckoutHelper
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
   end
 
+  def add_digital_item_to_cart
+    goto "/products/romney-family-table-ann-89648?variant_id=5897"
+
+    browser.button(id: "add-to-cart-button").click
+    assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
+  end
+
    def begin_checkout
     goto "/cart"
     browser.button(id: "checkout-link").click

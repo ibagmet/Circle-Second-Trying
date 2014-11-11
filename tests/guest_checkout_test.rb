@@ -4,27 +4,50 @@ class GuestCheckoutTest < NibleyTest
   include BaseCheckoutHelper
   include GuestCheckoutHelper
 
-  def test_guest_checkout
-    logout
-    add_item_to_cart
-    begin_checkout
-    checkout_as_guest
-    input_guest_addresses
-    select_delivery
-    pay_with_credit_card
-    confirm_order
-    verify_successful_order
+  def test_guest_checkout_physical
+    product_type = ['physical']
+    use_billing_address = true
+
+    guest_checkout_workflow product_type, use_billing_address
   end
 
-  def test_guest_checkout_with_separate_shipping
-    logout
-    add_item_to_cart
-    begin_checkout
-    checkout_as_guest
-    input_guest_addresses(false)
-    select_delivery
-    pay_with_credit_card
-    confirm_order
-    verify_successful_order
+  def test_guest_checkout_digital
+    product_type = ['digital']
+    use_billing_address = true
+
+    guest_checkout_workflow product_type, use_billing_address
   end
+
+
+  def test_guest_checkout_both
+    product_type = ['physical', 'digital']
+    use_billing_address = true
+
+    guest_checkout_workflow product_type, use_billing_address
+  end
+
+
+  def test_guest_checkout_physical_with_separate_shipping
+    product_type = ['physical']
+    use_billing_address = false
+
+    guest_checkout_workflow product_type, use_billing_address
+  end
+
+  def test_guest_checkout_digital_with_separate_shipping
+    product_type = ['digital']
+    use_billing_address = false
+
+    guest_checkout_workflow product_type, use_billing_address
+  end
+
+
+  def test_guest_checkout_both_with_separate_shipping
+    product_type = ['physical', 'digital']
+    use_billing_address = false 
+
+    guest_checkout_workflow product_type, use_billing_address
+  end
+
+
 end

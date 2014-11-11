@@ -5,29 +5,45 @@ class LoginAndCheckoutTest < NibleyTest
   include StandardCheckoutHelper
 
   def test_the_login_and_checkout 
-    login
-    add_item_to_cart
-    begin_checkout
-    select_addresses
-    select_delivery
-    select_payment
-    confirm_order
-    verify_successful_order 
+    login_type = 'before'
+    product_type = ['physical']
+
+    standard_checkout_workflow login_type, product_type 
+  end
+
+  def test_the_login_and_checkout_digital_product
+    login_type = 'before'
+    product_type = ['digital']
+
+    standard_checkout_workflow login_type, product_type 
+  end
+
+  def test_the_login_and_checkout_mixed_products
+    login_type = 'before'
+    product_type = ['physical', 'digital']
+
+    standard_checkout_workflow login_type, product_type 
   end
 
   def test_login_after_selecting_item
-    logout
-    add_item_to_cart
-    begin_checkout
+    login_type = 'during'
+    product_type = ['physical']
 
-    browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
-    browser.text_field(name: "spree_user[password]").set 'test123'
-    browser.input(name: "commit").when_present.click
-
-    select_addresses
-    select_delivery
-    select_payment
-    confirm_order
-    verify_successful_order 
+    standard_checkout_workflow login_type, product_type 
   end
+
+  def test_login_after_selecting_digital_item
+    login_type = 'during'
+    product_type = ['digital']
+
+    standard_checkout_workflow login_type, product_type 
+  end
+
+  def test_login_after_selecting_mixed_items
+    login_type = 'during'
+    product_type = ['physical', 'digital']
+
+    standard_checkout_workflow login_type, product_type 
+  end
+
 end

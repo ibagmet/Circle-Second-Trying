@@ -1,5 +1,19 @@
-##Setup
+## Setup
 
-For now - install the Selenium IDE plugin for Firefox: http://docs.seleniumhq.org/download/
+To setup this project on your local machine run:
 
-Then open and run the test suite.
+    bundle install
+
+and
+
+    bundle exec rake setup
+
+That will install the required gems and run the setup test to create the test user if it isn't already created.
+
+
+## Running the tests
+
+To run the tests run:
+
+    bundle exec rake test
+

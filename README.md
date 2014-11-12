@@ -17,3 +17,9 @@ To run the tests run:
 
     bundle exec rake test
 
+
+## Config for local
+
+Right now the tests are set to run against nibley.deseretbook.com.
+
+If you want to point at a different url, you can change the base_url method in the test_helper file.

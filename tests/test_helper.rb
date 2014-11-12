@@ -15,7 +15,7 @@ class NibleyTest < Minitest::Test
   end
    
   def teardown 
-    #@browser.close
+    @browser.close
   end
 
   def base_url

@@ -1,6 +1,7 @@
 module GuestCheckoutHelper
+  
 
-  def guest_checkout_workflow(item_type, use_billing_address)
+  def guest_checkout_workflow(item_type, use_billing_address, payment_type)
     logout
 
     add_item_to_cart if item_type.include? 'physical'
@@ -12,7 +13,9 @@ module GuestCheckoutHelper
 
     select_delivery if item_type.include? 'physical'
 
-    pay_with_credit_card
+    pay_with_credit_card if payment_type == 'credit card'
+    pay_with_gift_card if payment_type == 'gift card'
+
     confirm_order
     verify_successful_order
   end
@@ -63,4 +66,13 @@ module GuestCheckoutHelper
     browser.input(name: "commit").when_present.click    
   end
 
+
+  def pay_with_gift_card
+    assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
+
+    browser.input(id: "order_payments_attributes__payment_method_id_6").click
+    browser.text_field(id: "gift_card_number_6").set gift_card_numbers[-1]
+
+    browser.input(name: "commit").when_present.click    
+  end
 end

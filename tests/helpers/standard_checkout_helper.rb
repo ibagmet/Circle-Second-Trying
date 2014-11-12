@@ -1,6 +1,6 @@
 module StandardCheckoutHelper 
 
-  def standard_checkout_workflow(login_type, item_type)
+  def standard_checkout_workflow(login_type, item_type, payment_type)
     login_type == "before" ? login : logout
 
     add_item_to_cart if item_type.include? 'physical'
@@ -18,7 +18,7 @@ module StandardCheckoutHelper
 
     select_delivery if item_type.include? 'physical'
 
-    select_payment
+    select_payment(payment_type)
     confirm_order
     verify_successful_order 
   end
@@ -36,11 +36,21 @@ module StandardCheckoutHelper
     browser.input(name: "commit").when_present.click
   end
 
-  def select_payment
+  def select_payment(payment_type)
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
-    if !browser.input(id: "use_existing_card_yes").checked?
-      # input payment information
+
+    if payment_type == 'credit card'
+      if !browser.input(id: "use_existing_card_yes").checked?
+        # input payment information
+      end
     end
+
+    if payment_type == 'gift card'
+      browser.input(id: "use_existing_card_no").click
+      browser.input(id: "order_payments_attributes__payment_method_id_6").click
+      browser.text_field(id: "gift_card_number_6").set gift_card_numbers[-1]
+    end
+    
 
     browser.input(name: "commit").when_present.click
   end

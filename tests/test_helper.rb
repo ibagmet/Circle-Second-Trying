@@ -5,6 +5,7 @@ require 'watir-webdriver'
 require 'helpers/base_checkout_helper'
 require 'helpers/standard_checkout_helper'
 require 'helpers/guest_checkout_helper'
+require 'helpers/gift_card_helper'
  
 class NibleyTest < Minitest::Test
   attr_reader :browser

@@ -10,3 +10,5 @@ task :setup do
   $LOAD_PATH.unshift('lib', 'tests')
   require './tests/setup'
 end
+
+task :default => [:test]

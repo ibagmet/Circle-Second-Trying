@@ -2,7 +2,7 @@ module GuestCheckoutHelper
   
 
   def guest_checkout_workflow(item_type, use_billing_address, payment_type)
-    logout
+    clear_cookies
 
     add_item_to_cart if item_type.include? 'physical'
     add_digital_item_to_cart if item_type.include? 'digital'
@@ -58,7 +58,7 @@ module GuestCheckoutHelper
   def pay_with_credit_card
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
-    browser.input(id: "order_payments_attributes__payment_method_id_3").click
+    browser.label(text: 'Credit Card').input(type: 'radio').click
     browser.text_field(id: "card_number").set '4111111111111111'
     browser.text_field(id: "card_expiry").set '01/18'
     browser.text_field(id: "card_code").set '555'
@@ -70,9 +70,38 @@ module GuestCheckoutHelper
   def pay_with_gift_card
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
-    browser.input(id: "order_payments_attributes__payment_method_id_6").click
-    browser.text_field(id: "gift_card_number_6").set gift_card_numbers[-1]
+    browser.label(text: 'Gift Card').input(type: 'radio').click
+
+    # find the Gift Card Number text field by looking at the 'for' property
+    # of the label with the text 'Gift Card Number'
+    browser.text_field(
+      id: browser.label(text: 'Gift Card Number').for
+    ).set gift_card_numbers[-1]
 
     browser.input(name: "commit").when_present.click    
+  end
+
+  def assert_checkout_as_guest_form_is_disabled
+    assert_equal("#{base_url}/checkout/registration", browser.url, 'expected to be on checkout registration page')
+
+    # assert that the correct error message is shown
+    assert(
+      browser.div(
+        class: 'flash error',
+        text: 'You must have an account to purchase ebooks'
+      ).exists?
+    )
+
+    # assert the email entry field is disabled
+    assert(
+      browser.text_field(
+        id: browser.div(id: 'guest_checkout').label(text: 'Email').for
+      ).disabled?
+    )
+
+    # assert the submit button for that form is disabled
+    assert(
+      browser.div(id: 'guest_checkout').form.input(type: 'submit').disabled?
+    )
   end
 end

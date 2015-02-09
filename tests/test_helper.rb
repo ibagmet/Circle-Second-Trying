@@ -6,6 +6,8 @@ require 'helpers/base_checkout_helper'
 require 'helpers/standard_checkout_helper'
 require 'helpers/guest_checkout_helper'
 require 'helpers/gift_card_helper'
+
+require 'pry-byebug'
  
 class NibleyTest < Minitest::Test
   attr_reader :browser
@@ -37,6 +39,10 @@ class NibleyTest < Minitest::Test
     browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
     browser.text_field(name: "spree_user[password]").set 'test123'
     browser.input(name: "commit").when_present.click
+  end
+
+  def clear_cookies
+    browser.cookies.clear
   end
 
 end

@@ -1,8 +1,8 @@
 module StandardCheckoutHelper 
 
   def standard_checkout_workflow(login_type, item_type, payment_type)
-    browser.cookies.clear
-    login_type == "before" ? login : logout
+    clear_cookies
+    login if login_type == "before"
 
     add_item_to_cart if item_type.include? 'physical'
     add_digital_item_to_cart if item_type.include? 'digital'

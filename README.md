@@ -26,6 +26,10 @@ If you want to point at a different url, you can change the base_url method in t
 
 ### TODO
 
-* Centralize the user information to one place.
+* Replace explicit references to input element IDs and Names with references through the associated labels.
+* Centralize registered user information to one place.
+* Centralize guest user information to one place.
 * Centralize credit card information to one place.
 * Centralize credit card form entry to one method.
+* Centralize gift card form entry to one method.
+* Replace the loops in the tests with individual examples (have to find a way to keep the browser open between examples).

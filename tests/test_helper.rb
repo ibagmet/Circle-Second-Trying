@@ -7,10 +7,17 @@ require 'helpers/standard_checkout_helper'
 require 'helpers/guest_checkout_helper'
 require 'helpers/gift_card_helper'
 
+require "minitest/reporters"
+Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
+
 require 'pry-byebug'
  
 class NibleyTest < Minitest::Test
   attr_reader :browser
+
+  def self.test_order
+   :alpha
+  end
 
   def setup 
     @browser ||= Watir::Browser.new :firefox
@@ -21,7 +28,7 @@ class NibleyTest < Minitest::Test
   end
 
   def base_url
-    "https://nibley.deseretbook.com"
+    "https://stage.deseretbook.com"
   end
 
   def goto(route)

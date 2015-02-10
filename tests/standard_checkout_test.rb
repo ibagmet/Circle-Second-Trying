@@ -25,13 +25,44 @@ class LoginAndCheckoutTest < NibleyTest
   end
 
   ### Create a physical-only order with small quantities (< 5) that will ship in one shipment, using a single credit card
-  def test_checkout_with_multiple_physical_items
-    puts "test_checkout_with_multiple_physical_items"
+  def test_checkout_with_multiple_physical_items_in_single_shipment
+    print "test_checkout_with_multiple_physical_items_in_single_shipment "
 
-    standard_checkout_workflow(
-      item_type: :physical,
-      physical_quantity: 4
-    )
+    [:credit_card, :gift_card].each do |payment_type|
+      puts "payment type: #{payment_type}"
+      standard_checkout_workflow(
+        item_type: :physical,
+        payment_type: payment_type,
+        physical_quantity: 4
+      )
+    end
   end
 
+  # Create a physical-only order with large quantities (> 25) that will have split shipments, using a single credit card
+  def test_checkout_with_multiple_physical_items_in_split_shipments
+    print "test_checkout_with_multiple_physical_items_in_split_shipments "
+
+    [:credit_card, :gift_card].each do |payment_type|
+      puts "payment type: #{payment_type}"
+      standard_checkout_workflow(
+        item_type: :physical,
+        payment_type: payment_type,
+        physical_quantity: 30
+      )
+    end
+  end
+
+  # Create a mixed physical and digital order with large quantities (> 25) that will have split shipments, using a single credit card (Redd)
+  def test_checkout_with_multiple_physical_and_digital_items_in_split_shipments
+    print "test_checkout_with_multiple_physical_and_digital_items_in_split_shipments "
+
+    [:credit_card, :gift_card].each do |payment_type|
+      puts "payment type: #{payment_type}"
+      standard_checkout_workflow(
+        item_type: [:digital, :physical],
+        payment_type: payment_type,
+        physical_quantity: 30
+      )
+    end
+  end
 end

@@ -1,6 +1,7 @@
 module StandardCheckoutHelper 
 
   def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_count: 1)
+    item_type = Array(item_type) # ensure item_type is an array.
     clear_cookies
     login if login_type == :before
 

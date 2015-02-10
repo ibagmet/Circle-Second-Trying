@@ -2,6 +2,7 @@ module GuestCheckoutHelper
   
 
   def guest_checkout_workflow(item_type: [:physical, :digital], use_billing_address: true, payment_type: :credit_card)
+    item_type = Array(item_type) # ensure item_type is an array.
     clear_cookies
 
     add_item_to_cart if item_type.include? :physical

@@ -5,7 +5,6 @@ class LoginAndCheckoutTest < NibleyTest
   include StandardCheckoutHelper
   include GiftCardHelper
 
-
   def test_the_login_and_checkout 
     login_type = :before
     product_type = [:physical]
@@ -31,7 +30,7 @@ class LoginAndCheckoutTest < NibleyTest
 
     standard_checkout_workflow(
       item_type: :physical,
-      physical_count: 4
+      physical_quantity: 4
     )
   end
 

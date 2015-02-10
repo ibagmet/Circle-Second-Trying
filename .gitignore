@@ -1,0 +1,4 @@
+.ruby-*
+.rvmrc
+tests/xxx_test.rb
+rst

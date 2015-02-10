@@ -2,26 +2,26 @@ module StandardCheckoutHelper
 
   def standard_checkout_workflow(login_type, item_type, payment_type)
     clear_cookies
-    login if login_type == "before"
+    login if login_type == :before
 
-    add_item_to_cart if item_type.include? 'physical'
-    add_digital_item_to_cart if item_type.include? 'digital'
+    add_item_to_cart if item_type.include? :physical
+    add_digital_item_to_cart if item_type.include? :digital
 
     begin_checkout
   
-    if login_type == "during"
+    if login_type == :during
       browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
       browser.text_field(name: "spree_user[password]").set 'test123'
       browser.input(name: "commit").when_present.click
-      if item_type.include?('digital')
+      if item_type.include?(:digital)
         browser.button(id: "checkout-link").click
         browser.button(id: "checkout-link").wait_while_present
       end
     end
 
-    select_addresses(allow_skip: (!item_type.include? ('physical')))
+    select_addresses(allow_skip: (!item_type.include? (:physical)))
 
-    select_delivery if item_type.include? 'physical'
+    select_delivery if item_type.include? :physical
 
     select_payment(payment_type)
     confirm_order
@@ -29,8 +29,8 @@ module StandardCheckoutHelper
 
     # verify the order state
     order_number = get_order_number
-    if product_type.include?('digital')
-      if product_type.include?('physical')
+    if item_type.include?(:digital)
+      if item_type.include?(:physical)
         # confirm that the order state is 'partial'
         confirm_order_shipment_state(order_number, 'partial')
       else
@@ -42,7 +42,6 @@ module StandardCheckoutHelper
       confirm_order_shipment_state(order_number, 'pending')
     end
   end
-
 
   def select_addresses(allow_skip: false)
     if allow_skip
@@ -66,7 +65,7 @@ module StandardCheckoutHelper
   def select_payment(payment_type)
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
-    if payment_type == 'credit card'
+    if payment_type == :credit_card
       if browser.input(id: "use_existing_card_yes").present?
         if !browser.input(id: "use_existing_card_yes").checked?
           browser.input(id: "use_existing_card_yes").click
@@ -82,7 +81,7 @@ module StandardCheckoutHelper
       end
     end
 
-    if payment_type == 'gift card'
+    if payment_type == :gift_card
       browser.input(id: "use_existing_card_no").click
       browser.label(text: 'Gift Card').input(type: 'radio').click
       browser.text_field(id: "gift_card_number_2").set gift_card_numbers[-1]

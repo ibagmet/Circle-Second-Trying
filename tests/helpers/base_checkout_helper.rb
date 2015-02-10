@@ -1,7 +1,9 @@
 module BaseCheckoutHelper
 
-  def add_item_to_cart
+  def add_item_to_cart(count: 1)
     goto "/products/crucible-doubt-terryl-l-givens-92865"
+
+    browser.text_field(name: 'quantity').set count
 
     browser.button(id: "add-to-cart-button").click
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"

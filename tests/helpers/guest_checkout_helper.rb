@@ -4,17 +4,17 @@ module GuestCheckoutHelper
   def guest_checkout_workflow(item_type, use_billing_address, payment_type)
     clear_cookies
 
-    add_item_to_cart if item_type.include? 'physical'
-    add_digital_item_to_cart if item_type.include? 'digital'
+    add_item_to_cart if item_type.include? :physical
+    add_digital_item_to_cart if item_type.include? :digital
 
     begin_checkout
     checkout_as_guest
     input_guest_addresses(use_billing_address)
 
-    select_delivery if item_type.include? 'physical'
+    select_delivery if item_type.include? :physical
 
-    pay_with_credit_card if payment_type == 'credit card'
-    pay_with_gift_card if payment_type == 'gift card'
+    pay_with_credit_card if payment_type == :credit_card
+    pay_with_gift_card if payment_type == :gift_card
 
     confirm_order
     verify_successful_order

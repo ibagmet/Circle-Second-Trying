@@ -33,3 +33,5 @@ If you want to point at a different url, you can change the base_url method in t
 * Centralize credit card form entry to one method.
 * Centralize gift card form entry to one method.
 * Replace the loops in the tests with individual examples (have to find a way to keep the browser open between examples).
+* If we're going to merge this in to the main nibley branch, we should convert from minitest to rspec (Nibley uses rspec).
+* Find a way to ensure the gift card being used always has a balance.

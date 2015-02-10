@@ -25,7 +25,22 @@ module StandardCheckoutHelper
 
     select_payment(payment_type)
     confirm_order
-    verify_successful_order 
+    verify_successful_order
+
+    # verify the order state
+    order_number = get_order_number
+    if product_type.include?('digital')
+      if product_type.include?('physical')
+        # confirm that the order state is 'partial'
+        confirm_order_shipment_state(order_number, 'partial')
+      else
+        # confirm that the order state is 'shipped'
+        confirm_order_shipment_state(order_number, 'shipped')
+      end
+    else
+      # confirm that the order state is 'pending'
+      confirm_order_shipment_state(order_number, 'pending')
+    end
   end
 
 

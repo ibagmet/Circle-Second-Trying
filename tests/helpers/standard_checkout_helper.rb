@@ -1,10 +1,10 @@
 module StandardCheckoutHelper 
 
-  def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card)
+  def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_count: 1)
     clear_cookies
     login if login_type == :before
 
-    add_item_to_cart if item_type.include? :physical
+    add_item_to_cart(count: physical_count) if item_type.include? :physical
     add_digital_item_to_cart if item_type.include? :digital
 
     begin_checkout

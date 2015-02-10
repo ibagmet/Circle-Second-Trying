@@ -15,7 +15,11 @@ class LoginAndCheckoutTest < NibleyTest
       [[:physical], [:digital], [:physical, :digital]].each do |product_type|
         [:credit_card, :gift_card].each do |payment_type|
           puts "standard checkout running login type: #{login_type}  product type: #{product_type}   payment type: #{payment_type}"
-          standard_checkout_workflow login_type, product_type, payment_type
+          standard_checkout_workflow(
+            login_type: login_type,
+            item_type: product_type,
+            payment_type: payment_type
+          )
         end
       end
     end

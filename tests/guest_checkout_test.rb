@@ -10,7 +10,11 @@ class GuestCheckoutTest < NibleyTest
       [true, false].each do |use_billing_address| 
         [:credit_card, :gift_card].each do |payment_type|
           puts "guest checkout running product type: #{product_type}  use_billing_address: #{use_billing_address}  payment type: #{payment_type}"
-          guest_checkout_workflow product_type, use_billing_address, payment_type
+          guest_checkout_workflow(
+            item_type: product_type,
+            use_billing_address: use_billing_address,
+            payment_type: payment_type
+          )
         end
       end
     end

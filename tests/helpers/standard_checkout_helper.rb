@@ -29,7 +29,7 @@ module StandardCheckoutHelper
     
     confirm_order
     verify_successful_order
-    verify_order_state
+    verify_order_state(item_type)
   end
 
   def select_addresses(allow_skip: false)

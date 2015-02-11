@@ -54,7 +54,7 @@ module BaseCheckoutHelper
     verify_order_totals
   end
 
-  def verify_order_state
+  def verify_order_state(item_type)
     order_number = get_order_number
     if item_type.include?(:digital)
       if item_type.include?(:physical)
@@ -137,7 +137,8 @@ module BaseCheckoutHelper
 
   def empty_cart
     cart_indicator = browser.li(class: 'cart')
-    assert(cart_indicator.exists?, "Can't find cart icon on page")
+    # cart_indicator will only be found if there are items currently in cart
+    return unless cart_indicator.exists?
     # only empty the cart if there's something in it.
     if cart_indicator.text.to_i > 0
       goto '/cart'

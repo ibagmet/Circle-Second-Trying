@@ -7,7 +7,7 @@ module StandardCheckoutHelper
       empty_cart
     end
 
-    add_items_to_card(item_type, physical_quantity: physical_quantity)
+    add_items_to_cart(item_type, physical_quantity: physical_quantity)
 
     begin_checkout
   

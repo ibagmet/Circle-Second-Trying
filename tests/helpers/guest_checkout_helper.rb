@@ -5,7 +5,7 @@ module GuestCheckoutHelper
     item_type = Array(item_type) # ensure item_type is an array.
     clear_cookies
 
-    add_items_to_card(item_type)
+    add_items_to_cart(item_type)
 
     begin_checkout
     checkout_as_guest

@@ -21,7 +21,7 @@ class GuestCheckoutTest < NibleyTest
   end
 
   def test_guests_cannot_check_out_with_digital_items
-    [:digital, [:physical, :digital]].each do |product_type|
+    [[:digital], [:physical, :digital]].each do |product_type|
       puts "guest users cannot check out with digital items. product type: #{product_type}"
       clear_cookies
       add_physical_item_to_cart if product_type.include? :physical

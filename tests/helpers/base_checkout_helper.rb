@@ -1,7 +1,12 @@
 module BaseCheckoutHelper
   URL_ORDER_NUMBER_PATTERN = /\/orders\/([A-Za-z0-9\-]+)/
 
-  def add_item_to_cart(quantity: 1)
+  def add_items_to_cart(item_types, physical_quantity: 1)
+    add_physical_item_to_cart(quantity: physical_quantity) if item_types.include? :physical
+    add_digital_item_to_cart if item_types.include? :digital
+  end
+
+  def add_physical_item_to_cart(quantity: 1)
     goto "/products/crucible-doubt-terryl-l-givens-92865"
 
     browser.text_field(name: 'quantity').set quantity
@@ -47,6 +52,22 @@ module BaseCheckoutHelper
     assert_on_order_confirmation_page
     assert browser.text.include?("Thank You. We have successfully received your order."), "Order did not successfully complete"
     verify_order_totals
+  end
+
+  def verify_order_state
+    order_number = get_order_number
+    if item_type.include?(:digital)
+      if item_type.include?(:physical)
+        # confirm that the order state is 'partial'
+        confirm_order_shipment_state(order_number, 'partial')
+      else
+        # confirm that the order state is 'shipped'
+        confirm_order_shipment_state(order_number, 'shipped')
+      end
+    else
+      # confirm that the order state is 'pending'
+      confirm_order_shipment_state(order_number, 'pending')
+    end
   end
 
   # Walk through the line items in an order confirmation or order history page
@@ -112,5 +133,15 @@ module BaseCheckoutHelper
       .td(class: 'order-shipment-state')
       .text
     assert_equal(expected_state.downcase, found_state.downcase)
+  end
+
+  def empty_cart
+    cart_indicator = browser.li(class: 'cart')
+    assert(cart_indicator.exists?, "Can't find cart icon on page")
+    # only empty the cart if there's something in it.
+    if cart_indicator.text.to_i > 0
+      goto '/cart'
+      browser.input(value: 'Empty Cart').click
+    end
   end
 end

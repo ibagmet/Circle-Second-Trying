@@ -40,8 +40,8 @@ class NibleyTest < Minitest::Test
   end
 
   def login
-    logout
-
+    clear_cookies
+    
     goto "/login"
     browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
     browser.text_field(name: "spree_user[password]").set 'test123'

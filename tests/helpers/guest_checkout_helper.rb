@@ -5,8 +5,7 @@ module GuestCheckoutHelper
     item_type = Array(item_type) # ensure item_type is an array.
     clear_cookies
 
-    add_item_to_cart if item_type.include? :physical
-    add_digital_item_to_cart if item_type.include? :digital
+    add_items_to_card(item_type)
 
     begin_checkout
     checkout_as_guest
@@ -77,7 +76,7 @@ module GuestCheckoutHelper
     # of the label with the text 'Gift Card Number'
     browser.text_field(
       id: browser.label(text: 'Gift Card Number').for
-    ).set gift_card_numbers[-1]
+    ).set gift_card_number
 
     browser.input(name: "commit").when_present.click    
   end

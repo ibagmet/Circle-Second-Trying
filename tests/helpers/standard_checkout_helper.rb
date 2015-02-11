@@ -2,11 +2,12 @@ module StandardCheckoutHelper
 
   def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_quantity: 1)
     item_type = Array(item_type) # ensure item_type is an array.
-    clear_cookies
-    login if login_type == :before
+    if login_type == :before
+      login
+      empty_cart
+    end
 
-    add_item_to_cart(quantity: physical_quantity) if item_type.include? :physical
-    add_digital_item_to_cart if item_type.include? :digital
+    add_items_to_card(item_type, physical_quantity: physical_quantity)
 
     begin_checkout
   
@@ -24,24 +25,11 @@ module StandardCheckoutHelper
 
     select_delivery if item_type.include? :physical
 
-    select_payment(payment_type)
+    select_payment(payment_type: payment_type)
+    
     confirm_order
     verify_successful_order
-
-    # verify the order state
-    order_number = get_order_number
-    if item_type.include?(:digital)
-      if item_type.include?(:physical)
-        # confirm that the order state is 'partial'
-        confirm_order_shipment_state(order_number, 'partial')
-      else
-        # confirm that the order state is 'shipped'
-        confirm_order_shipment_state(order_number, 'shipped')
-      end
-    else
-      # confirm that the order state is 'pending'
-      confirm_order_shipment_state(order_number, 'pending')
-    end
+    verify_order_state
   end
 
   def select_addresses(allow_skip: false)
@@ -63,7 +51,7 @@ module StandardCheckoutHelper
     browser.input(name: "commit").when_present.click
   end
 
-  def select_payment(payment_type)
+  def select_payment(payment_type:, gift_card_type: :valid)
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
     if payment_type == :credit_card
@@ -85,8 +73,7 @@ module StandardCheckoutHelper
     if payment_type == :gift_card
       browser.input(id: "use_existing_card_no").click
       browser.label(text: 'Gift Card').input(type: 'radio').click
-      browser.text_field(id: "gift_card_number_2").set gift_card_numbers[-1]
-
+      browser.text_field(id: "gift_card_number_2").set gift_card_number(type: gift_card_type)
     end
     
 

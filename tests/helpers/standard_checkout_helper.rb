@@ -9,6 +9,7 @@ module StandardCheckoutHelper
       physical_quantity: physical_quantity
     )
 
+    clear_cookies
     if login_type == :before
       login
       empty_cart
@@ -19,7 +20,8 @@ module StandardCheckoutHelper
     begin_checkout
   
     if login_type == :during
-      browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
+      # .when_present below because the field may take a moment to appear
+      browser.text_field(name: "spree_user[email]").when_present.set 'tests@deseretbook.com'
       browser.text_field(name: "spree_user[password]").set 'test123'
       browser.input(name: "commit").when_present.click
       if item_type.include?(:digital)
@@ -70,19 +72,31 @@ module StandardCheckoutHelper
         order_log(credit_card_number: :saved_number)
       else
         # This is the "Credit Card" radio button on Payment Information page.
-        # should find more definite way of identifying this.
-        browser.input(id: 'order_payments_attributes__payment_method_id_4').click
-        browser.text_field(name: "payment_source[4][name]").set 'test user'
-        browser.text_field(id: "card_number").set '4111111111111111'
-        browser.text_field(id: "card_expiry").set '01/18'
-        browser.text_field(id: "card_code").set '555'
+        browser.label(text: 'Credit Card').input.click
+        browser.text_field(
+          id: browser.label(text: 'Name on card').for
+        ).set 'test user'
+        browser.text_field(
+          id: browser.label(text: 'Card Number').for
+        ).set '4111111111111111'
+        browser.text_field(
+          id: browser.label(text: 'Expiration').for
+        ).set '01/18'
+        browser.text_field(
+          id: browser.label(text: 'Card Code').for
+        ).set '555'
         order_log(credit_card_number: '4111111111111111')
       end
     end
 
     if payment_type == :gift_card
-      number = gift_card_number(type: gift_card_type)
-      browser.input(id: "use_existing_card_no").click
+      number = gift_card_number(
+        type: gift_card_type,
+        amount: get_order_total_from_payment_summary
+      )
+      if browser.input(id: "use_existing_card_no").present?
+        browser.input(id: "use_existing_card_no").click
+      end
       browser.label(text: 'Gift Card').input(type: 'radio').click
       browser.text_field(
         id: browser.label(text: 'Gift Card Number').for
@@ -90,7 +104,6 @@ module StandardCheckoutHelper
       order_log(gift_card_number: number)
     end
     
-
     browser.input(name: "commit").when_present.click
   end
 end

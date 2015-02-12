@@ -11,6 +11,8 @@ module BaseCheckoutHelper
 
     browser.text_field(name: 'quantity').set quantity
 
+    # select the Hardcover product variant
+    browser.div(id: 'product-variants').a(title: 'Hardcover').click
     browser.button(id: "add-to-cart-button").click
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
   end
@@ -39,7 +41,9 @@ module BaseCheckoutHelper
   def confirm_order
     assert (browser.url == "#{base_url}/checkout/confirm"), "url should be /checkout/confirm"
 
-    browser.textarea(name: "preferences[comment]").set "this is a test"
+    # comment disabled because they make it so the orders in stage have to be
+    # manually released.
+    # browser.textarea(name: "preferences[comment]").set "this is a test"
     browser.input(name: "commit").when_present.click
   end
 
@@ -149,5 +153,18 @@ module BaseCheckoutHelper
       goto '/cart'
       browser.input(value: 'Empty Cart').click
     end
+  end
+
+  # When we're on the checkout payment page, this long, ugly, nested map will
+  # return the total cost from order summary on this page so we can get a gift
+  # card for the correct amount (unless were testing different behavior).
+  def get_order_total_from_payment_summary
+    assert_equal("#{base_url}/checkout/payment", browser.url,
+      'This method can only be called in the payment page')
+    browser.div(id: 'checkout-summary').table.tbodys.map{|tbody|
+      tbody.rows.map{|tr|
+        tr.tds.last.text }
+      }.flatten.map{|c| c.gsub(/[^0-9\.]/, '').to_f
+    }.inject(:+).round(2)
   end
 end

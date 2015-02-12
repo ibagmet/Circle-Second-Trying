@@ -63,7 +63,8 @@ class LoginAndCheckoutTest < NibleyTest
   # test that you cannot check out using a gift card that has insufficient funds
   def test_gift_card_with_insufficient_funds
     [[:digital], [:physical]].each do |item_type|
-      puts "test_gift_card_with_insufficient_funds item_type: #{item_type}"  
+      puts "test_gift_card_with_insufficient_funds item_type: #{item_type}"
+      clear_cookies
       login
 
       empty_cart
@@ -92,7 +93,8 @@ class LoginAndCheckoutTest < NibleyTest
   # much logic can be combined.
   def test_invalid_gift_card
     [[:digital], [:physical]].each do |item_type|
-      puts "test_invalid_gift_card item_type: #{item_type}"  
+      puts "test_invalid_gift_card item_type: #{item_type}"
+      clear_cookies
       login
 
       empty_cart

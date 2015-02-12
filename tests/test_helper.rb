@@ -57,11 +57,11 @@ class NibleyTest < Minitest::Test
   end
 
   def login
-    clear_cookies
     goto "/login"
     browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
     browser.text_field(name: "spree_user[password]").set 'test123'
     browser.input(name: "commit").when_present.click
+    assert browser.text.include?("Logged in successfully"), "Could not log in"
   end
 
   def clear_cookies
@@ -96,7 +96,7 @@ class NibleyTest < Minitest::Test
     rescue Minitest::Assertion => e
       puts e
       warn "Assertion Failed. Dropping into debugger now:"
-      binding.pry;
+      binding.pry
       raise e
     end
   end

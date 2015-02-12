@@ -84,7 +84,9 @@ module StandardCheckoutHelper
       number = gift_card_number(type: gift_card_type)
       browser.input(id: "use_existing_card_no").click
       browser.label(text: 'Gift Card').input(type: 'radio').click
-      browser.text_field(id: "gift_card_number_2").set number
+      browser.text_field(
+        id: browser.label(text: 'Gift Card Number').for
+      ).set number
       order_log(gift_card_number: number)
     end
     

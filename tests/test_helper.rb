@@ -63,7 +63,7 @@ class NibleyTest < Minitest::Test
 
   # can be called with either (field, value) or ({field: value})
   def order_log(field, value = nil)
-    raise '#start_new_order_log not called yet!' unless @@orders
+    return unless defined?(@@orders) # don't log unless #start_new_order_log called
     if field.is_a?(Hash)
       field.each{|k,v| @@orders.last[k.to_sym] = v }
     else

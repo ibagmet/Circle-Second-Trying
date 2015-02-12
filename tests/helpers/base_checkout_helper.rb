@@ -109,7 +109,7 @@ module BaseCheckoutHelper
     assert_on_order_confirmation_page
     # Get order number from the browser URL. Assumes the format is like:
     # https://stage.deseretbook.com/orders/W-STAGE-00535202074?checkout_complete=true
-    return browser.url.match(URL_ORDER_NUMBER_PATTERN)[1]
+    browser.url.match(URL_ORDER_NUMBER_PATTERN)[1].tap{|num| order_log(:order_number, num) }
   end
 
   def go_to_account_page
@@ -133,6 +133,7 @@ module BaseCheckoutHelper
       .td(class: 'order-shipment-state')
       .text
     assert_equal(expected_state.downcase, found_state.downcase)
+    order_log(order_state: found_state)
   end
 
   def empty_cart

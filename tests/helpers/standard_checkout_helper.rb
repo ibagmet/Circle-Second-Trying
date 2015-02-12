@@ -2,6 +2,13 @@ module StandardCheckoutHelper
 
   def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_quantity: 1)
     item_type = Array(item_type) # ensure item_type is an array.
+    start_new_order_log(
+      login_type: login_type,
+      item_type: item_type,
+      payment_type: payment_type,
+      physical_quantity: physical_quantity
+    )
+
     if login_type == :before
       login
       empty_cart
@@ -30,6 +37,7 @@ module StandardCheckoutHelper
     confirm_order
     verify_successful_order
     verify_order_state(item_type)
+    order_finished
   end
 
   def select_addresses(allow_skip: false)
@@ -59,6 +67,7 @@ module StandardCheckoutHelper
         if !browser.input(id: "use_existing_card_yes").checked?
           browser.input(id: "use_existing_card_yes").click
         end
+        order_log(credit_card_number: :saved_number)
       else
         # This is the "Credit Card" radio button on Payment Information page.
         # should find more definite way of identifying this.
@@ -67,13 +76,16 @@ module StandardCheckoutHelper
         browser.text_field(id: "card_number").set '4111111111111111'
         browser.text_field(id: "card_expiry").set '01/18'
         browser.text_field(id: "card_code").set '555'
+        order_log(credit_card_number: '4111111111111111')
       end
     end
 
     if payment_type == :gift_card
+      number = gift_card_number(type: gift_card_type)
       browser.input(id: "use_existing_card_no").click
       browser.label(text: 'Gift Card').input(type: 'radio').click
-      browser.text_field(id: "gift_card_number_2").set gift_card_number(type: gift_card_type)
+      browser.text_field(id: "gift_card_number_2").set number
+      order_log(gift_card_number: number)
     end
     
 

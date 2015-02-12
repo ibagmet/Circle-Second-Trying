@@ -3,6 +3,12 @@ module GuestCheckoutHelper
 
   def guest_checkout_workflow(item_type: [:physical, :digital], use_billing_address: true, payment_type: :credit_card)
     item_type = Array(item_type) # ensure item_type is an array.
+    start_new_order_log(
+      login_type: login_type,
+      item_type: item_type,
+      payment_type: payment_type,
+      physical_quantity: physical_quantity
+    )
     clear_cookies
 
     add_items_to_cart(item_type)
@@ -18,6 +24,7 @@ module GuestCheckoutHelper
 
     confirm_order
     verify_successful_order
+    order_finished
   end
 
 
@@ -63,6 +70,8 @@ module GuestCheckoutHelper
     browser.text_field(id: "card_expiry").set '01/18'
     browser.text_field(id: "card_code").set '555'
 
+    order_log(credit_card_number: credit_card_number)
+
     browser.input(name: "commit").when_present.click    
   end
 
@@ -72,11 +81,14 @@ module GuestCheckoutHelper
 
     browser.label(text: 'Gift Card').input(type: 'radio').click
 
+    number = gift_card_number
+
     # find the Gift Card Number text field by looking at the 'for' property
     # of the label with the text 'Gift Card Number'
     browser.text_field(
       id: browser.label(text: 'Gift Card Number').for
-    ).set gift_card_number
+    ).set number
+    order_log(gift_card_number: number)
 
     browser.input(name: "commit").when_present.click    
   end

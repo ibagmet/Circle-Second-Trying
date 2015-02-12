@@ -15,6 +15,11 @@ require 'pry-byebug'
 class NibleyTest < Minitest::Test
   attr_reader :browser
 
+  Minitest.after_run do
+    puts "Order Log:"
+    puts @@orders.to_json 
+  end
+
   def self.test_order
    :alpha
   end
@@ -28,7 +33,7 @@ class NibleyTest < Minitest::Test
   end
 
   def base_url
-    "https://stage.deseretbook.com"
+    "https://nibley.deseretbook.com"
   end
 
   def goto(route)
@@ -41,7 +46,6 @@ class NibleyTest < Minitest::Test
 
   def login
     clear_cookies
-    
     goto "/login"
     browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
     browser.text_field(name: "spree_user[password]").set 'test123'
@@ -50,6 +54,27 @@ class NibleyTest < Minitest::Test
 
   def clear_cookies
     browser.cookies.clear
+  end
+
+  def start_new_order_log(*parameters)
+    @@orders ||= []
+    @@orders << { start: Time.now, parameters: parameters, finished: false }
+  end
+
+  # can be called with either (field, value) or ({field: value})
+  def order_log(field, value = nil)
+    raise '#start_new_order_log not called yet!' unless @@orders
+    if field.is_a?(Hash)
+      field.each{|k,v| @@orders.last[k.to_sym] = v }
+    else
+      @@orders.last[field.to_sym] = value
+    end
+  end
+
+  def order_finished
+    raise '#start_new_order_log not called yet!' unless @@orders
+    @@orders.last[:finished] = true
+    @@orders.last[:finish] = Time.now
   end
 
 end

@@ -13,31 +13,43 @@ Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 require 'pry-byebug'
  
 class NibleyTest < Minitest::Test
-  attr_reader :browser
-
-  Minitest.after_run do
-    puts "Order Log:"
-    puts @@orders.to_json 
+  # the browser instance is stored as a classvar so it will stay open and not
+  # close and them reopen for every test example (which wastes time).
+  def browser
+    @@browser
   end
 
+  Minitest.after_run do
+    if defined?(@@orders)
+      puts "Order Log:"
+      puts @@orders.to_json 
+    end
+    @@browser.close
+  end
+
+  # make tests run in alphabetical order
   def self.test_order
    :alpha
   end
 
+  # runs before each test
   def setup 
-    @browser ||= Watir::Browser.new :firefox
+    # @browser ||= Watir::Browser.new :firefox
+    unless defined?(@@browser)
+      @@browser = Watir::Browser.new :firefox
+    end
   end
    
+  # runs after each test
   def teardown 
-    @browser.close
   end
 
   def base_url
-    "https://nibley.deseretbook.com"
+    "https://stage.deseretbook.com"
   end
 
   def goto(route)
-    @browser.goto "#{base_url}#{route}"
+    browser.goto "#{base_url}#{route}"
   end
 
   def logout
@@ -75,6 +87,18 @@ class NibleyTest < Minitest::Test
     raise '#start_new_order_log not called yet!' unless @@orders
     @@orders.last[:finished] = true
     @@orders.last[:finish] = Time.now
+  end
+
+  # overload assert so that pry debugger starts on failed assertion
+  def assert test, msg = nil
+    begin
+      super
+    rescue Minitest::Assertion => e
+      puts e
+      warn "Assertion Failed. Dropping into debugger now:"
+      binding.pry;
+      raise e
+    end
   end
 
 end

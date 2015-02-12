@@ -97,8 +97,12 @@ module BaseCheckoutHelper
     reported_order_subtotal = order_details_table.tfoot(id: 'subtotal').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
     assert_equal(calculated_order_subtotal, reported_order_subtotal, 'Order subtotals do not match')
     
+    # sum all shipping cost lines, there may be more than one.
+    shipping_cost = order_details_table.tfoot(id: 'shipment-total').rows.map { |tr|
+      tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
+    }.inject(:+)
+
     # Check that the order grand total is correct
-    shipping_cost = order_details_table.tfoot(id: 'shipment-total').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
     tax = order_details_table.tfoot(id: 'tax-adjustments').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
     caclulated_order_total = (calculated_order_subtotal + shipping_cost + tax).round(2)
     reported_order_total = order_details_table.tfoot(id: 'order-total').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f

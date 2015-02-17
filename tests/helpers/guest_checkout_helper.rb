@@ -23,6 +23,7 @@ module GuestCheckoutHelper
 
     confirm_order
     verify_successful_order
+    get_order_number
     order_finished
   end
 

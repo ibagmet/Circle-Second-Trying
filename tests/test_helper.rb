@@ -76,10 +76,27 @@ class NibleyTest < Minitest::Test
   # can be called with either (field, value) or ({field: value})
   def order_log(field, value = nil)
     return unless defined?(@@orders) # don't log unless #start_new_order_log called
+    values = {}
+
+    # populate values hash
     if field.is_a?(Hash)
-      field.each{|k,v| @@orders.last[k.to_sym] = v }
+      field.each{|k,v| values[k] = v }
     else
-      @@orders.last[field.to_sym] = value
+      values[field.to_sym] = value
+    end
+
+    # store items in values hash in @@orders
+    values.each do |k,v|
+      if (existing_value = @@orders.last[k.to_sym])
+        if existing_value.is_a? Array
+          @@orders.last[k.to_sym] << v
+        else
+          # storing a duplicate key; turn this in to an array and store both
+          @@orders.last[k.to_sym] = [existing_value, v]
+        end
+      else
+        @@orders.last[k.to_sym] = v
+      end
     end
   end
 

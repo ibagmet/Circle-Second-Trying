@@ -24,7 +24,37 @@ class LoginAndCheckoutTest < NibleyTest
     end
   end
 
-  ### Create a physical-only order with small quantities (< 5) that will ship in one shipment, using a single credit card
+  def test_checkout_with_gift_card_and_credit_card
+    puts "test_checkout_with_gift_card_and_credit_card"
+    standard_checkout_workflow(
+      login_type: :before,
+      item_type: :physical,
+      payment_type: [:gift_card, :credit_card]
+    )
+  end
+
+  # check out with multiple gift that don't cover the whole balance, use a
+  # credit card for the remaining balance.
+  def test_checkout_with_multiple_gift_cards_and_credit_card
+    puts "test_checkout_with_multiple_gift_cards_and_credit_card"
+    standard_checkout_workflow(
+      login_type: :before,
+      item_type: :physical,
+      payment_type: [:gift_card, :gift_card, :gift_card, :credit_card]
+    )
+  end
+
+  # check out with multiple gift cards but no credit cards.
+  def test_checkout_with_multiple_gift_cards
+    puts "test_checkout_with_multiple_gift_cards"
+    standard_checkout_workflow(
+      login_type: :before,
+      item_type: :physical,
+      payment_type: [:gift_card, :gift_card]
+    )
+  end
+
+  # ### Create a physical-only order with small quantities (< 5) that will ship in one shipment, using a single credit card
   def test_checkout_with_multiple_physical_items_in_single_shipment
     [:credit_card, :gift_card].each do |payment_type|
       puts "test_checkout_with_multiple_physical_items_in_single_shipment payment type: #{payment_type}"

@@ -2,6 +2,7 @@ module StandardCheckoutHelper
 
   def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_quantity: 1)
     item_type = Array(item_type) # ensure item_type is an array.
+    payment_type = Array(payment_type) # ensure payment_type is an array.
     start_new_order_log(
       login_type: login_type,
       item_type: item_type,
@@ -62,9 +63,36 @@ module StandardCheckoutHelper
   end
 
   def select_payment(payment_type:, gift_card_type: :valid)
+    payment_type = Array(payment_type) # ensure payment_type is an array.
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
-    if payment_type == :credit_card
+    # if this is a multiple tender order, process the gift-card payment portion first.
+    number_of_gift_cards(payment_type).times do |i|
+      order_total = get_order_total_from_payment_summary
+      gift_card_amount = if payment_type.include?(:credit_card)
+        # split payment, this gift card should be less than the order total
+        # so that we can also apply a credit card.
+        order_total / (number_of_gift_cards(payment_type)+1)
+      else
+        # single payment type order
+        order_total / number_of_gift_cards(payment_type)
+      end.round(2)
+      number = gift_card_number(
+        type: gift_card_type,
+        amount: gift_card_amount
+      )
+      if browser.input(id: "use_existing_card_no").present?
+        browser.input(id: "use_existing_card_no").click
+      end
+      browser.label(text: 'Gift Card').input(type: 'radio').click
+      browser.text_field(
+        id: browser.label(text: 'Gift Card Number').for
+      ).set number
+      order_log(gift_card_number: number)
+      browser.input(name: "commit").when_present.click
+    end
+
+    if payment_type.include?(:credit_card)
       if browser.input(id: "use_existing_card_yes").present?
         if !browser.input(id: "use_existing_card_yes").checked?
           browser.input(id: "use_existing_card_yes").click
@@ -87,24 +115,12 @@ module StandardCheckoutHelper
         ).set '555'
         order_log(credit_card_number: '4111111111111111')
       end
+      browser.input(name: "commit").when_present.click
     end
+  end
 
-    if payment_type == :gift_card
-      number = gift_card_number(
-        type: gift_card_type,
-        amount: get_order_total_from_payment_summary
-      )
-      if browser.input(id: "use_existing_card_no").present?
-        browser.input(id: "use_existing_card_no").click
-      end
-      browser.label(text: 'Gift Card').input(type: 'radio').click
-      browser.text_field(
-        id: browser.label(text: 'Gift Card Number').for
-      ).set number
-      order_log(gift_card_number: number)
-    end
-    
-    browser.input(name: "commit").when_present.click
+  def number_of_gift_cards(payment_type)
+    payment_type.each_with_object([0]) { |type,counts| counts[0]+=1 if type == :gift_card }.first
   end
 end
 

@@ -3,6 +3,7 @@ module GuestCheckoutHelper
 
   def guest_checkout_workflow(item_type: [:physical, :digital], use_billing_address: true, payment_type: :credit_card)
     item_type = Array(item_type) # ensure item_type is an array.
+    payment_type = Array(payment_type) # ensure payment_type is an array.
     start_new_order_log(
       use_billing_address: use_billing_address,
       item_type: item_type,
@@ -18,8 +19,8 @@ module GuestCheckoutHelper
 
     select_delivery if item_type.include? :physical
 
-    pay_with_credit_card if payment_type == :credit_card
-    pay_with_gift_card if payment_type == :gift_card
+    pay_with_credit_card if payment_type.include?(:credit_card)
+    pay_with_gift_card if payment_type.include?(:gift_card)
 
     confirm_order
     verify_successful_order
@@ -61,7 +62,6 @@ module GuestCheckoutHelper
     browser.input(name: "commit").when_present.click
   end
 
-
   def pay_with_credit_card
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
@@ -74,7 +74,6 @@ module GuestCheckoutHelper
 
     browser.input(name: "commit").when_present.click    
   end
-
 
   def pay_with_gift_card
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
@@ -98,12 +97,13 @@ module GuestCheckoutHelper
 
     # assert that the correct error message is shown
     assert(
-      browser.div(
-        class: 'flash error',
-        text: 'You must have an account to purchase ebooks'
-      ).exists?
+      browser
+        .div(id: 'guest_checkout')
+        .div(class: 'flash error')
+        .text
+        .include?('You must have an account to purchase ebooks')
     )
-
+      
     # assert the email entry field is disabled
     assert(
       browser.text_field(

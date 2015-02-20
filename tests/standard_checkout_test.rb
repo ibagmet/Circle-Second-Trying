@@ -5,28 +5,40 @@ class LoginAndCheckoutTest < NibleyTest
   include StandardCheckoutHelper
   include GiftCardHelper
 
-  def test_the_login_and_checkout 
-    # login_type = :before
-    # product_type = [:physical]
-    # payment_type = :gift_card
+  def test_login_before_checkout
+  
+    [:physical, :digital, [:physical, :digital]].each do |product_type|
+      [
+        :credit_card,
+        :gift_card,
+        [:gift_card, :credit_card],
+        [:gift_card, :gift_card, :credit_card],
+        [:gift_card, :gift_card],
+        [:gift_card, :gift_card, :gift_card]
+      ].each do |payment_type|
+        puts "standard checkout running login type: :before  product type: #{product_type}   payment type: #{payment_type}"
+        standard_checkout_workflow(
+          login_type: :before,
+          item_type: product_type,
+          payment_type: payment_type
+        )
+      end
+    end
+  end
 
-    [:before, :during].each do |login_type|
-      [:physical, :digital, [:physical, :digital]].each do |product_type|
-        [
-          :credit_card,
-          :gift_card,
-          [:gift_card, :credit_card],
-          [:gift_card, :gift_card, :credit_card],
-          [:gift_card, :gift_card],
-          [:gift_card, :gift_card, :gift_card]
-        ].each do |payment_type|
-          puts "standard checkout running login type: #{login_type}  product type: #{product_type}   payment type: #{payment_type}"
-          standard_checkout_workflow(
-            login_type: login_type,
-            item_type: product_type,
-            payment_type: payment_type
-          )
-        end
+  def test_login_during_checkout
+    [:physical, :digital, [:physical, :digital]].each do |product_type|
+      [
+        :credit_card,
+        :gift_card,
+        [:gift_card, :credit_card]
+      ].each do |payment_type|
+        puts "standard checkout running login type: :during  product type: #{product_type}   payment type: #{payment_type}"
+        standard_checkout_workflow(
+          login_type: :during,
+          item_type: product_type,
+          payment_type: payment_type
+        )
       end
     end
   end

@@ -77,6 +77,21 @@ module StandardCheckoutHelper
         # single payment type order
         order_total / number_of_gift_cards(payment_type)
       end.round(2)
+
+      if i == 0 # if this is the first gift card payment of the order
+        # For orders that don't include a credit card, we need to check for
+        # rounding errors that can happen when calculating how big each gift
+        # card should be. This is not necessary if we're also using a credit
+        # card because it will "soak up" the rounding issue.
+        unless payment_type.include?(:credit_card)
+          if (rounding_error = order_total - (gift_card_amount * number_of_gift_cards(payment_type))) > 0.0
+            # if we find a rounding error, make the total for this card
+            # big enough to cover it.
+            gift_card_amount += rounding_error
+          end
+        end
+      end
+
       number = gift_card_number(
         type: gift_card_type,
         amount: gift_card_amount

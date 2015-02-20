@@ -12,7 +12,14 @@ class LoginAndCheckoutTest < NibleyTest
 
     [:before, :during].each do |login_type|
       [:physical, :digital, [:physical, :digital]].each do |product_type|
-        [:credit_card, :gift_card].each do |payment_type|
+        [
+          :credit_card,
+          :gift_card,
+          [:gift_card, :credit_card],
+          [:gift_card, :gift_card, :credit_card],
+          [:gift_card, :gift_card],
+          [:gift_card, :gift_card, :gift_card]
+        ].each do |payment_type|
           puts "standard checkout running login type: #{login_type}  product type: #{product_type}   payment type: #{payment_type}"
           standard_checkout_workflow(
             login_type: login_type,
@@ -54,9 +61,10 @@ class LoginAndCheckoutTest < NibleyTest
     )
   end
 
-  # ### Create a physical-only order with small quantities (< 5) that will ship in one shipment, using a single credit card
+  # Create a physical-only order with small quantities (< 5) that will ship in one shipment, using a single credit card
+  # Create a physical-only order with small quantities (< 5) that will ship in one shipment, using multiple gift cards and a credit card
   def test_checkout_with_multiple_physical_items_in_single_shipment
-    [:credit_card, :gift_card].each do |payment_type|
+    [:credit_card, :gift_card, [:gift_card, :gift_card, :credit_card]].each do |payment_type|
       puts "test_checkout_with_multiple_physical_items_in_single_shipment payment type: #{payment_type}"
       standard_checkout_workflow(
         item_type: :physical,
@@ -67,8 +75,9 @@ class LoginAndCheckoutTest < NibleyTest
   end
 
   # Create a physical-only order with large quantities (> 25) that will have split shipments, using a single credit card
+  # Create a physical-only order with large quantities (> 25) that will have split shipments, using multiple gift cards and a credit card
   def test_checkout_with_multiple_physical_items_in_split_shipments
-    [:credit_card, :gift_card].each do |payment_type|
+    [:credit_card, :gift_card, [:gift_card, :gift_card, :credit_card]].each do |payment_type|
       puts "test_checkout_with_multiple_physical_items_in_split_shipments payment type: #{payment_type}"
       standard_checkout_workflow(
         item_type: :physical,
@@ -78,9 +87,10 @@ class LoginAndCheckoutTest < NibleyTest
     end
   end
 
-  # Create a mixed physical and digital order with large quantities (> 25) that will have split shipments, using a single credit card (Redd)
+  # Create a mixed physical and digital order with large quantities (> 25) that will have split shipments, using a single credit card
+  # Create a mixed physical and digital order with large quantities (> 25) that will have split shipments, using multiple gift cards and a credit card
   def test_checkout_with_multiple_physical_and_digital_items_in_split_shipments
-    [:credit_card, :gift_card].each do |payment_type|
+    [:credit_card, :gift_card, [:gift_card, :gift_card, :credit_card]].each do |payment_type|
       puts "test_checkout_with_multiple_physical_and_digital_items_in_split_shipments payment type: #{payment_type}"
       standard_checkout_workflow(
         item_type: [:digital, :physical],

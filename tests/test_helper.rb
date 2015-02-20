@@ -76,6 +76,8 @@ class NibleyTest < Minitest::Test
   # can be called with either (field, value) or ({field: value})
   def order_log(field, value = nil)
     return unless defined?(@@orders) # don't log unless #start_new_order_log called
+    return unless @@orders.last[:start] # can't add to order not started.
+    return if @@orders.last[:finished] # can't add to order record once finished.
     values = {}
 
     # populate values hash
@@ -98,6 +100,14 @@ class NibleyTest < Minitest::Test
         @@orders.last[k.to_sym] = v
       end
     end
+  end
+
+  def close_current_order_log
+    return unless defined?(@@orders) # can't close order log that isn't open
+
+    # @@orders.last is current order log, so appending new hash effectively
+    # turn off current order log.
+    @@orders << {}
   end
 
   def order_finished

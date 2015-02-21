@@ -7,7 +7,7 @@ module BaseCheckoutHelper
   end
 
   def add_physical_item_to_cart(quantity: 1)
-    goto "/products/crucible-doubt-terryl-l-givens-92865"
+    goto "/products/romney-family-table-ann-89648"
 
     browser.text_field(name: 'quantity').set quantity
 

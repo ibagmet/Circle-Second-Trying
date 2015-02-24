@@ -7,7 +7,7 @@ module BaseCheckoutHelper
   end
 
   def add_physical_item_to_cart(quantity: 1)
-    goto "/products/romney-family-table-ann-89648"
+    goto physical_product_url
 
     browser.text_field(name: 'quantity').set quantity
 
@@ -18,7 +18,7 @@ module BaseCheckoutHelper
   end
 
   def add_digital_item_to_cart
-    goto "/products/romney-family-table-ann-89648?variant_id=5897"
+    goto digital_product_url
 
     # select the eBook product variant
     browser.div(id: 'product-variants').a(title: 'eBook').click

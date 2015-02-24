@@ -6,6 +6,7 @@ require 'helpers/base_checkout_helper'
 require 'helpers/standard_checkout_helper'
 require 'helpers/guest_checkout_helper'
 require 'helpers/gift_card_helper'
+require 'helpers/bookshelf_helper'
 
 require "minitest/reporters"
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
@@ -46,6 +47,23 @@ class NibleyTest < Minitest::Test
 
   def base_url
     "https://stage.deseretbook.com"
+  end
+
+  def bookshelf_api_base_url
+    "https://stage.bookshelf.deseretbook.com/api/v1"
+  end
+
+  def physical_product_url
+    "/products/romney-family-table-ann-89648"
+  end
+
+  def digital_product_url
+    "/products/romney-family-table-ann-89648?variant_id=5897"
+  end
+
+  # must be the book id for the product in #digital_product_url
+  def digital_product_book_id
+    4416
   end
 
   def goto(route)

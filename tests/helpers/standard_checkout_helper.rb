@@ -66,7 +66,7 @@ module StandardCheckoutHelper
     payment_type = Array(payment_type) # ensure payment_type is an array.
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 
-    # if this is a multiple tender order, process the gift-card payment portion first.
+    # if this is a multiple tender order, we must enter the gift-card first.
     number_of_gift_cards(payment_type).times do |i|
       order_total = get_order_total_from_payment_summary
       gift_card_amount = if payment_type.include?(:credit_card)
@@ -96,10 +96,7 @@ module StandardCheckoutHelper
         type: gift_card_type,
         amount: gift_card_amount
       )
-      if browser.input(id: "use_existing_card_no").present?
-        browser.input(id: "use_existing_card_no").click
-      end
-      browser.label(text: 'Gift Card').input(type: 'radio').click
+      browser.label(class: 'new-cc-method').input(type: 'radio').click
       browser.text_field(
         id: browser.label(text: 'Gift Card Number').for
       ).set number
@@ -108,9 +105,9 @@ module StandardCheckoutHelper
     end
 
     if payment_type.include?(:credit_card)
-      if browser.input(id: "use_existing_card_yes").present?
-        if !browser.input(id: "use_existing_card_yes").checked?
-          browser.input(id: "use_existing_card_yes").click
+      if browser.label(class: 'existing-cc-method').present?
+        unless browser.label(class: 'existing-cc-method').input(type: 'radio').checked?
+          browser.label(class: 'existing-cc-method').input(type: 'radio').click
         end
         order_log(credit_card_number: :saved_number)
       else

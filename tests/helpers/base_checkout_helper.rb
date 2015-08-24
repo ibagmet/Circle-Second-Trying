@@ -19,19 +19,18 @@ module BaseCheckoutHelper
 
   def add_digital_item_to_cart
     goto digital_product_url
-
     # select the eBook product variant
-    browser.div(id: 'product-variants').a(title: 'eBook').click
+    browser.span(class: 'variant-presentation', text: 'eBook').click
     browser.button(id: "add-to-cart-button").click
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
   end
 
   def begin_checkout
     goto "/cart"
-    browser.button(id: "checkout-link").click
+    browser.a(class: "btn-checkout").click
     # give time for next page to load before continuing
     browser.button(id: "checkout-link").wait_while_present
-  end 
+  end
 
   def select_delivery
     assert (browser.url == "#{base_url}/checkout/delivery"), "url should be /checkout/delivery"
@@ -79,7 +78,7 @@ module BaseCheckoutHelper
   def verify_order_totals
     assert_on_order_confirmation_page
     calculated_order_subtotal = 0.0
-    
+
     order_details_table = browser.div(class: 'order-details').table
 
     # Check the subtotals of each line item
@@ -100,7 +99,7 @@ module BaseCheckoutHelper
     # Check that the order subtotal is are correct
     reported_order_subtotal = order_details_table.tfoot(id: 'subtotal').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
     assert_equal(calculated_order_subtotal, reported_order_subtotal, 'Order subtotals do not match')
-    
+
     # sum all shipping cost lines, there may be more than one.
     shipping_cost = order_details_table.tfoot(id: 'shipment-total').rows.map { |tr|
       tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f

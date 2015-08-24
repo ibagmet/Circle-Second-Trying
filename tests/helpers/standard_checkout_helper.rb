@@ -1,4 +1,4 @@
-module StandardCheckoutHelper 
+module StandardCheckoutHelper
 
   def standard_checkout_workflow(login_type: :before, item_type: [:physical, :digital], payment_type: :credit_card, physical_quantity: 1)
     item_type = Array(item_type) # ensure item_type is an array.
@@ -19,7 +19,7 @@ module StandardCheckoutHelper
     add_items_to_cart(item_type, physical_quantity: physical_quantity)
 
     begin_checkout
-  
+
     if login_type == :during
       # .when_present below because the field may take a moment to appear
       browser.text_field(name: "spree_user[email]").when_present.set 'tests@deseretbook.com'
@@ -36,7 +36,7 @@ module StandardCheckoutHelper
     select_delivery if item_type.include? :physical
 
     select_payment(payment_type: payment_type)
-    
+
     confirm_order
     verify_successful_order
     verify_order_state(item_type)
@@ -45,14 +45,15 @@ module StandardCheckoutHelper
 
   def select_addresses(allow_skip: false)
     if allow_skip
-      # if we're only doing digital items, there is a change we'll be sent to
-      # the select payment page instead; this is normal. If so, all this step
+      # if we're only doing digital items, there is a chance we'll be sent to
+      # the select payment page instead; this is normal. If so, allow this step
       # to be skipped.
       return if browser.url == "#{base_url}/checkout/payment"
     else
       assert_equal("#{base_url}/checkout/address", browser.url, "incorrect location")
     end
 
+    # The element below won't be found if the user has no saved address.
     browser.element(xpath: "//fieldset[@id='billing']/div[@class='select_address']/div[1]/label/input").click
 
     if !browser.input(id: "order_use_billing").checked?
@@ -96,12 +97,17 @@ module StandardCheckoutHelper
         type: gift_card_type,
         amount: gift_card_amount
       )
-      browser.label(class: 'new-cc-method').input(type: 'radio').click
+
+      # click the "Gift Card" radio button
+      browser.element(css: 'input[data-method-type="gift_card"]').click
+
       browser.text_field(
         id: browser.label(text: 'Gift Card Number').for
       ).set number
       order_log(gift_card_number: number)
-      browser.input(name: "commit").when_present.click
+
+      # click the "apply to order" button for the gift card
+      browser.button(class: "js-apply-gift-card-btn")
     end
 
     if payment_type.include?(:credit_card)

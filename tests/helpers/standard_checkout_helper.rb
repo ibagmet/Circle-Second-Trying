@@ -63,7 +63,7 @@ module StandardCheckoutHelper
     browser.input(name: "commit").when_present.click
   end
 
-  def select_payment(payment_type:, gift_card_type: :valid)
+  def select_payment(payment_type: :credit_card, gift_card_type: :valid)
     payment_type = Array(payment_type) # ensure payment_type is an array.
     assert (browser.url == "#{base_url}/checkout/payment"), "url should be /checkout/payment"
 

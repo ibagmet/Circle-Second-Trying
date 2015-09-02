@@ -6,7 +6,7 @@ class LoginAndCheckoutTest < NibleyTest
   include GiftCardHelper
 
   def test_login_before_checkout
-  
+
     [:physical, :digital, [:physical, :digital]].each do |product_type|
       [
         :credit_card,

@@ -150,6 +150,13 @@ module BaseCheckoutHelper
     # only empty the cart if there's something in it.
     if cart_indicator.text.to_i > 0
       goto '/cart'
+
+      # check if the handsell modal is present
+      if browser.div(id: 'handsell').present?
+        # Dismiss the modal by clicking the 'close' link
+        browser.div(id: 'handsell').a(text: 'Close').click
+      end
+
       browser.input(value: 'Empty Cart').click
     end
   end

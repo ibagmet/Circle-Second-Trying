@@ -118,22 +118,23 @@ module StandardCheckoutHelper
         order_log(credit_card_number: :saved_number)
       else
         # This is the "Credit Card" radio button on Payment Information page.
-        browser.label(text: 'Credit Card').input.click
+        browser.input(
+          id: 'select_payment_method_spree_gateway_braintree_gateway_2'
+        ).click
         browser.text_field(
           id: browser.label(text: 'Name on card').for
         ).set 'test user'
         browser.text_field(
           id: browser.label(text: 'Card Number').for
         ).set '4111111111111111'
-        browser.text_field(
-          id: browser.label(text: 'Expiration').for
-        ).set '01/18'
+        browser.select(id: 'date_month').option(text: '1 - January').select
+        browser.select(id: 'date_year').option(text: '2018').select
         browser.text_field(
           id: browser.label(text: 'Card Code').for
         ).set '555'
         order_log(credit_card_number: '4111111111111111')
       end
-      browser.input(name: "commit").when_present.click
+      browser.button(text: 'Continue').click
     end
   end
 

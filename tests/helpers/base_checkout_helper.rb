@@ -12,7 +12,7 @@ module BaseCheckoutHelper
     browser.text_field(name: 'quantity').set quantity
 
     # select the Hardcover product variant
-    browser.div(id: 'product-variants').a(title: 'Hardcover').click
+    browser.div(class: 'variant-list').span(class: 'variant-presentation', text: 'Hardcover').click
     browser.button(id: "add-to-cart-button").click
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
   end
@@ -20,7 +20,7 @@ module BaseCheckoutHelper
   def add_digital_item_to_cart
     goto digital_product_url
     # select the eBook product variant
-    browser.span(class: 'variant-presentation', text: 'eBook').click
+    browser.div(class: 'variant-list').span(class: 'variant-presentation', text: 'eBook').click
     browser.button(id: "add-to-cart-button").click
     assert browser.text.include?("Item added to cart"), "Item was not correctly added to cart"
   end
@@ -32,9 +32,17 @@ module BaseCheckoutHelper
     browser.button(id: "checkout-link").wait_while_present
   end
 
-  def select_delivery
-    assert (browser.url == "#{base_url}/checkout/delivery"), "url should be /checkout/delivery"
-    browser.input(name: "commit").when_present.click
+  def select_delivery(allow_skip: false)
+    if allow_skip
+      # if we're only doing digital items, there is a chance we'll be sent to
+      # the select payment page instead; this is normal. If so, allow this step
+      # to be skipped.
+      return if browser.url == "#{base_url}/checkout/confirm"
+    else
+      assert (browser.url == "#{base_url}/checkout/delivery"), "url should be /checkout/delivery"
+    end
+
+    browser.button(text: 'Continue').click
   end
 
   def confirm_order
@@ -43,7 +51,8 @@ module BaseCheckoutHelper
     # comment disabled because they make it so the orders in stage have to be
     # manually released.
     # browser.textarea(name: "preferences[comment]").set "this is a test"
-    browser.input(name: "commit").when_present.click
+
+    browser.button(text: 'Place Order').click
   end
 
   # valid for both order confirmation or order history pages.
@@ -102,12 +111,11 @@ module BaseCheckoutHelper
 
     # sum all shipping cost lines, there may be more than one.
     shipping_cost = order_details_table.tfoot(id: 'shipment-total').rows.map { |tr|
-      tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
+      tr.tds.last.text.gsub(/[^0-9\.]/, '').to_f
     }.inject(:+)
 
     # Check that the order grand total is correct
-    tax = order_details_table.tfoot(id: 'tax-adjustments').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
-    caclulated_order_total = (calculated_order_subtotal + shipping_cost + tax).round(2)
+    caclulated_order_total = (calculated_order_subtotal + shipping_cost).round(2)
     reported_order_total = order_details_table.tfoot(id: 'order-total').tr.td(class: 'total').text.gsub(/[^0-9\.]/, '').to_f
     assert_equal(caclulated_order_total, reported_order_total, 'Order grand totals do not match')
   end

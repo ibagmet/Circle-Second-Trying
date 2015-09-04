@@ -5,7 +5,6 @@ class CartReviewTest < NibleyTest
   include StandardCheckoutHelper
 
   def test_add_twice_to_cart
-binding.pry
   	empty_cart
   	add_physical_item_to_cart(quantity: 2)
   	goto  '/cart'
@@ -26,7 +25,6 @@ binding.pry
   		sleep(1)
   		wait = wait - 1
   	end
-
 
   	quantity = browser.text_field(class: 'line_item_quantity').value.to_i
   	cart_item_price = browser.td(class: 'cart-item-price').text.split("\n").first.gsub(/[^0-9\.]/, '').to_f

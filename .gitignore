@@ -1,3 +1,4 @@
+.DS_Store
 .ruby-*
 .rvmrc
 tests/xxx_test.rb

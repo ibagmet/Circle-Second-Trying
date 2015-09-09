@@ -12,7 +12,7 @@ require "minitest/reporters"
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 require 'pry-byebug'
- 
+
 class NibleyTest < Minitest::Test
   # the browser instance is stored as a classvar so it will stay open and not
   # close and them reopen for every test example (which wastes time).
@@ -23,9 +23,18 @@ class NibleyTest < Minitest::Test
   Minitest.after_run do
     if defined?(@@orders)
       puts "Order Log:"
-      puts @@orders.to_json 
+      puts @@orders.to_json
     end
     @@browser.close
+  end
+
+  # load settings from tests/config.yaml
+  def config
+    @config ||= begin
+      require 'yaml'
+      require 'ostruct'
+      OpenStruct.new(YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml')))
+    end
   end
 
   # make tests run in alphabetical order
@@ -34,36 +43,35 @@ class NibleyTest < Minitest::Test
   end
 
   # runs before each test
-  def setup 
-    # @browser ||= Watir::Browser.new :firefox
+  def setup
     unless defined?(@@browser)
-      @@browser = Watir::Browser.new :firefox
+      @@browser = Watir::Browser.new (config.browser || :firefox).to_sym
     end
   end
-   
+
   # runs after each test
-  def teardown 
+  def teardown
   end
 
   def base_url
-    "https://stage.deseretbook.com"
+    config.base_url
   end
 
   def bookshelf_api_base_url
-    "https://stage.bookshelf.deseretbook.com/api/v1"
+    config.bookshelf_api_base_url
   end
 
   def physical_product_url
-    "/products/romney-family-table-ann-89648"
+    config.physical_product_url
   end
 
   def digital_product_url
-    "/products/romney-family-table-ann-89648?variant_id=5897"
+    config.digital_product_url
   end
 
   # must be the book id for the product in #digital_product_url
   def digital_product_book_id
-    4416
+    config.digital_product_book_id
   end
 
   def goto(route)

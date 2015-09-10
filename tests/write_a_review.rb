@@ -6,6 +6,7 @@ class WriteAReview < NibleyTest
   include StandardCheckoutHelper
 
   def test_guest_cannot_write_a_review
+    goto '/logout'
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     assert_equal("#{base_url}/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889", browser.url, "incorrect location")
     if browser.a(text: "Write a Review").exists?
@@ -17,11 +18,7 @@ class WriteAReview < NibleyTest
   end
 
   def test_success_case_of_review
-    goto '/login'
-
-    browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
-    browser.text_field(name: "spree_user[password]").set 'test123'
-    browser.input(name: "commit").click
+    login
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     browser.a(text: "Write a Review").click
     assert_equal("#{base_url}/products/rm-halestorm-entertainment-47109/reviews/new", browser.url, "incorrect location")
@@ -37,10 +34,7 @@ class WriteAReview < NibleyTest
   end
 
   def test_failure_case_of_review_no_raring
-    goto '/login'
-    browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
-    browser.text_field(name: "spree_user[password]").set 'test123'
-    browser.input(name: "commit").click
+    login
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     browser.a(text: "Write a Review").click
     assert_equal("#{base_url}/products/rm-halestorm-entertainment-47109/reviews/new", browser.url, "incorrect location")
@@ -59,10 +53,7 @@ class WriteAReview < NibleyTest
   end
 
   def test_failure_case_of_review_no_name
-    goto '/login'
-    browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
-    browser.text_field(name: "spree_user[password]").set 'test123'
-    browser.input(name: "commit").click
+    login
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     browser.a(text: "Write a Review").click
     assert_equal("#{base_url}/products/rm-halestorm-entertainment-47109/reviews/new", browser.url, "incorrect location")
@@ -81,10 +72,7 @@ class WriteAReview < NibleyTest
   end
 
   def test_failure_case_of_review_no_content
-    goto '/login'
-    browser.text_field(name: "spree_user[email]").set 'tests@deseretbook.com'
-    browser.text_field(name: "spree_user[password]").set 'test123'
-    browser.input(name: "commit").click
+    login
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     browser.a(text: "Write a Review").click
     assert_equal("#{base_url}/products/rm-halestorm-entertainment-47109/reviews/new", browser.url, "incorrect location")

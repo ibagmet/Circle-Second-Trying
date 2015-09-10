@@ -143,14 +143,19 @@ class NibleyTest < Minitest::Test
   end
 
   # overload assert so that pry debugger starts on failed assertion
-  def assert test, msg = nil
-    begin
-      super
-    rescue Minitest::Assertion => e
-      puts e
-      warn "Assertion Failed. Dropping into debugger now:"
-      binding.pry
-      raise e
+  def assert test, msg = nil, options = {}
+    options = { debug_on_failure: true }.merge(options)
+    if options[:debug_on_failure]
+      begin
+        super(test, msg)
+      rescue Minitest::Assertion => e
+        puts e
+        warn "Assertion Failed. Dropping into debugger now:"
+        binding.pry
+        raise e
+      end
+    else
+      super(test, msg)
     end
   end
 

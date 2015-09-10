@@ -6,7 +6,7 @@ class WriteAReview < NibleyTest
   include StandardCheckoutHelper
 
   def test_guest_cannot_write_a_review
-    goto '/logout'
+    logout
     goto '/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889'
     assert_equal("#{base_url}/p/rm-halestorm-entertainment-47109?taxon_id=148&variant_id=55889", browser.url, "incorrect location")
     if browser.a(text: "Write a Review").exists?
@@ -30,7 +30,7 @@ class WriteAReview < NibleyTest
     browser.input(name: "commit").click
     assert(browser.div(class: 'flash notice').present?)
     assert_equal("#{base_url}/p/rm-halestorm-entertainment-47109?variant_id=55889", browser.url, "incorrect location")
-    goto '/logout'
+    logout
   end
 
   def test_failure_case_of_review_no_raring
@@ -49,7 +49,7 @@ class WriteAReview < NibleyTest
       'Expected to find <strong> tag with text "1 error prohibited this record from being saved" but did not.'
     )
 
-    goto '/logout'
+    logout
   end
 
   def test_failure_case_of_review_no_name
@@ -68,7 +68,7 @@ class WriteAReview < NibleyTest
       'Expected to find <strong> tag with text "1 error prohibited this record from being saved" but did not.'
     )
 
-    goto '/logout'
+    logout
   end
 
   def test_failure_case_of_review_no_content
@@ -87,7 +87,7 @@ class WriteAReview < NibleyTest
       'Expected to find <strong> tag with text "1 error prohibited this record from being saved" but did not.'
     )
 
-    goto '/logout'
+    logout
   end
 
 

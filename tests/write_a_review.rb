@@ -23,7 +23,7 @@ class WriteAReview < NibleyTest
     browser.text_field(name: "review[name]").set Faker::Name.name
     browser.text_field(name: "review[title]").set Faker::Company.bs
     browser.textarea(name: "review[review]").set Faker::Hacker.say_something_smart
-    submit_review
+    browser.input(name: "commit").click
     assert_equal(browser.div(class: 'flash notice').text, "Review was successfully submitted")
     assert_equal("#{base_url}/p/rm-halestorm-entertainment-47109?variant_id=55889", browser.url, "incorrect location")
     logout

@@ -45,8 +45,12 @@ class NibleyTest < Minitest::Test
   # runs before each test
   def setup
     unless defined?(@@browser)
-      @@browser = Watir::Browser.new (config.browser || :firefox).to_sym
+      @@browser = open_browser
     end
+  end
+
+  def open_browser
+    Watir::Browser.new (config.browser || :firefox).to_sym
   end
 
   # runs after each test

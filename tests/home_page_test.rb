@@ -36,11 +36,7 @@ class HomePageTest < NibleyTest
 
     failures = []
 
-    progressbar = ProgressBar.create(
-      title: 'Checking URLs',
-      total: anchors.length,
-      format: "%t: |%B| %p%% (%c/%C) %e"
-    )
+    progressbar =new_progressbar('Checking URLs', anchors.length)
 
     anchors.each_with_index do |anchor, i|
       url = anchor.attribute('href')
@@ -71,36 +67,41 @@ class HomePageTest < NibleyTest
 
     failures = []
 
-    browser.ul(class: 'nav-links').lis.each{|menu_li|
+    browser.ul(class: 'nav-links').lis.each do |menu_li|
+      # Brittle way to find just the top-level menu <li>s
       next unless menu_li.attribute_value('data-url')
 
       menu_name = menu_li.text
-      # puts menu_name.inspect
 
       # There may be a hidden <div> in the <li>, or just a link.
       # If it's just a link, record the anchor and continue.
       if !menu_li.div.exists? && menu_li.a.exists?
-        unless valid_link?(menu_li.a.attribute_value('href'))
-          failures << [menu_name, menu_li.a.attribute_value('href')]
-        end
+        url = menu_li.a.attribute_value('href')
+        puts "Menu link: #{menu_name.inspect}: #{url.inspect}"
+        failures << [menu_name, url] unless valid_link?(url)
         next
       end
 
-      # before mouse-over, verify the div is hidden.
+      # Before mouse-over, verify the div is hidden.
       assert(!menu_li.div.visible?)
 
-      # next, mouse-over the li and verify the div is now visible
+      # Mouse-over the li
       menu_li.hover
+
+      # Verify the div is now visible
       assert(menu_li.div.visible?)
 
-      # test all the links
+      # Get the links in the menu
       menu_anchors = menu_li.div.as.to_a
 
-      progressbar = ProgressBar.create(
-        title: "Links in #{menu_name.inspect}",
-        total: menu_anchors.length,
-        format: "%t: |%B| %p%% (%c/%C) %e"
+      # Verify there are links; this is an easy way to test that we got the
+      # right element.
+      assert(
+        !menu_anchors.empty?,
+        "Didn't find any links in menu #{menu_name.inspect}. Did the menu open?"
       )
+
+      progressbar =new_progressbar("Links in #{menu_name.inspect}", menu_anchors.length)
 
       menu_anchors.each do |anchor|
         url = anchor.attribute_value('href')
@@ -109,7 +110,7 @@ class HomePageTest < NibleyTest
         failures << [menu_name, url, text] unless valid_link?(url)
         progressbar.increment
       end
-    }
+    end
 
     assert(failures.empty?,
       [
@@ -133,5 +134,15 @@ private
     HTTParty.head(url,
       verify: false, # don't verify ssl certs
     ).code == 200
+  end
+
+  def new_progressbar(title, total, options={})
+    ProgressBar.create(
+      {
+        title: title,
+        total: total,
+        format: "%t: |%B| %p%% (%c/%C) %e"
+      }.merge(options)
+    )
   end
 end

@@ -13,9 +13,17 @@ That will install the required gems and run the setup test to create the test us
 
 ## Running the tests
 
-To run the tests run:
+To run all the tests run:
 
     bundle exec rake test
+
+To run just a single test, use the `rst` utility in the root of the project:
+
+    ./rst tests/<test_file_name.rb>
+
+.. or to run a single example in a a file:
+
+    ./rst tests/<test_file_name.rb> <method name within that test file>
 
 
 ## Config for local

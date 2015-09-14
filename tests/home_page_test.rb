@@ -36,7 +36,7 @@ class HomePageTest < NibleyTest
 
     failures = []
 
-    progressbar =new_progressbar('Checking URLs', anchors.length)
+    progressbar = new_progressbar('Checking URLs', anchors.length)
 
     anchors.each_with_index do |anchor, i|
       url = anchor.attribute('href')
@@ -101,7 +101,7 @@ class HomePageTest < NibleyTest
         "Didn't find any links in menu #{menu_name.inspect}. Did the menu open?"
       )
 
-      progressbar =new_progressbar("Links in #{menu_name.inspect}", menu_anchors.length)
+      progressbar = new_progressbar("Links in #{menu_name.inspect}", menu_anchors.length)
 
       menu_anchors.each do |anchor|
         url = anchor.attribute_value('href')

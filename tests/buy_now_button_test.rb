@@ -14,10 +14,8 @@ class BuyNowButtonTest < NibleyTest
 			browser.text_field(name: "spree_user[password]").set 'test123'
 	        browser.text_field(name: "spree_user[password_confirmation]").set 'test123'
 	        browser.input(name: "commit").click
-            assert(browser.div(class: 'flash notice').present?)
-            goto '/t/ebooks/history'
-			browser.a(text: "L. Tom Perry, An Uncommon L...").click
-			assert_equal("#{base_url}/p/l-tom-perry-uncommon-life-years-preparation-1922-1976-lee-87417?taxon_id=434&variant_id=9020-hardcover", browser.url, "incorrect location")
+           searching_for_perry
+			assert_equal("#{base_url}/p/l-tom-perry-uncommon-life-years-preparation-1922-1976-lee-87417?variant_id=9020-hardcover", browser.url, "incorrect location")
 			browser.span(text: "eBook").click
 			browser.button(text: "Add To Cart").click
 			assert_equal("#{base_url}/item_added", browser.url, "incorrect location")
@@ -52,15 +50,30 @@ class BuyNowButtonTest < NibleyTest
 			browser.button(class: "btn btn-primary btn-lg pull-right btn-continue").click
             assert_equal(browser.div(class: 'flash notice').text, "Thank You. We have successfully received your order.")
             browser.a(class: "btn btn-link btn-left-justify-text").click
-			goto '/t/ebooks/biography-slash-autobiography'
-			browser.a(text: "To the Rescue: The Biograph...").click
-			assert_equal("#{base_url}/p/rescue-biography-thomas-s-monson-heidi-swinton-74648?taxon_id=394&variant_id=24243-audiobook-cd-", browser.url, "incorrect location")
+			searching_for_hinckley
+			assert_equal("#{base_url}/p/go-forward-faith-biography-president-gordon-b-hinckley-sheri-l-dew-136?variant_id=113262-ebook", browser.url, "incorrect location")
 			browser.span(text: "eBook").click
 			browser.a(class: "btn btn-lg btn-primary btn-block btn-buy-now text-uppercase").exists?
 			browser.a(class: "btn btn-lg btn-primary btn-block btn-buy-now text-uppercase").click
 			assert_equal("#{base_url}/checkout/confirm", browser.url, "incorrect location")
 			browser.button(class: "btn btn-primary btn-lg pull-right btn-continue").click
 		    logout
-	
 	end
+
+private
+
+def searching_for_perry
+      browser.text_field(name: "keywords").set 'L. Tom Perry, An Uncommon Life: Years of Preparation, 1922-1976'
+      browser.input(class: "btn btn-primary img-responsive js-search-button").click
+      assert(browser.h1(text: "Search results for 'L. Tom Perry, An Uncommon Life: Years of Preparation, 1922-1976'").exists?)
+      browser.a(text: "Learn More").click
+  end
+
+  def searching_for_hinckley
+      browser.text_field(name: "keywords").set 'Go Forward with Faith: The Biography of President Gordon B. Hinckley'
+      browser.input(class: "btn btn-primary img-responsive js-search-button").click
+      assert(browser.h1(text: "Search results for 'Go Forward with Faith: The Biography of President Gordon B. Hinckley'").exists?)
+      browser.a(text: "Learn More").click
+  end
 end
+

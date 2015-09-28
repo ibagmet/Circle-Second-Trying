@@ -28,16 +28,16 @@ class ItemAdded < NibleyTest
             browser.close
 
             browser = open_browser
-	        browser.goto 'https://stage.deseretbook.com/login'
+	        browser.goto 'http://deseretbook.net/login'
 			browser.text_field(name: "spree_user[email]").set email_new
 		    browser.text_field(name: "spree_user[password]").set 'test123'
 		    browser.input(name: "commit").click
-		    browser.goto 'https://stage.deseretbook.com/cart' 
+		    browser.goto 'http://deseretbook.net/cart' 
 		    browser.a(text: "Marble Christus Statue").exists?
 			browser.close
 
 			browser = open_browser
-			browser.goto 'https://stage.deseretbook.com/cart'
+			browser.goto 'http://deseretbook.net/cart'
 			browser.a(text: "Marble Christus Statue").exists?
 			browser.close
 

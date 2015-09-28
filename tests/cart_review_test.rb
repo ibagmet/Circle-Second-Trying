@@ -22,7 +22,7 @@ class CartReviewTest < NibleyTest
   		if browser.td(class: 'cart-item-total').value == cart_item_total
   			break
   		end
-  		sleep(1)
+  		sleep(1) #animation
   		wait = wait - 1
   	end
 

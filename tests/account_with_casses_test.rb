@@ -70,8 +70,8 @@ class AccountWithCassesTest < NibleyTest
 		def test_failure_cases_invaild_password
 
 			goto  '/signup'	
-			email_name = ::Faker::Internet.safe_email
-	        browser.text_field(name: "spree_user[email]").set email_name  
+			email_new = ::Faker::Internet.safe_email
+	        browser.text_field(name: "spree_user[email]").set email_new  
 	        browser.text_field(name: "spree_user[first_name]").set 'test_name'
 	        browser.text_field(name: "spree_user[last_name]").set 'test_last_name'
 	        browser.input(name: "commit").click
@@ -87,8 +87,8 @@ class AccountWithCassesTest < NibleyTest
 		def test_failure_cases_password_fields_do_not_match
 
 			goto  '/signup'	
-			email_name = ::Faker::Internet.safe_email
-	 		browser.text_field(name: "spree_user[email]").set email_name  
+			email_new = ::Faker::Internet.safe_email
+	 		browser.text_field(name: "spree_user[email]").set email_new
 	        browser.text_field(name: "spree_user[first_name]").set 'test_name'
 	        browser.text_field(name: "spree_user[last_name]").set 'test_last_name'
 			browser.text_field(name: "spree_user[password]").set 'test123'

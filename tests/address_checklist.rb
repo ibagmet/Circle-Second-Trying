@@ -26,13 +26,13 @@ class AddressChecklist < NibleyTest
 			check_filled_form
 			click_address_link
             search_for_statue
-            browser.a(text: "Close").click
+            #browser.a(text: "Close").click
 			changing_address
 			billing_address
 			confirmation_button
 			confirmation_button
 			assert_equal("#{base_url}/checkout/delivery", browser.url, "incorrect location")
-			browser.span(text: "$51.90").click
+			browser.span(text: "$71.90").click
             browser.button(class: 'btn btn-primary pull-right btn-continue').click
 			assert_equal("#{base_url}/checkout/payment", browser.url, "incorrect location")
 			browser.text_field(id: "name_on_card_2").set 'test user'
@@ -57,10 +57,9 @@ class AddressChecklist < NibleyTest
 			browser.select(name:"order[ship_address_attributes][state_id]").select 'Colorado'
 			browser.text_field(name:"order[ship_address_attributes][phone]").set ::Faker::PhoneNumber.cell_phone
             confirmation_button
-			assert_equal("#{base_url}/checkout/address", browser.url, "incorrect location")
             confirmation_button
             assert_equal("#{base_url}/checkout/delivery", browser.url, "incorrect location")
-            browser.span(text: "$29.90").click
+            browser.span(text: "$49.90").click
             browser.button(class: "btn btn-primary pull-right btn-continue").click
 			assert_equal("#{base_url}/checkout/payment", browser.url, "incorrect location")
             finishing_part

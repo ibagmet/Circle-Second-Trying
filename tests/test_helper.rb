@@ -31,9 +31,18 @@ class NibleyTest < Minitest::Test
   # load settings from tests/config.yaml
   def config
     @config ||= begin
+      config_file_name = 'config.yml'
+      config_file_path = File.join(File.dirname(__FILE__), config_file_name)
+
+      # copy config.yml from config.yaml.example if it does not exist.
+
+      if !File.exists?(config_file_path)
+        puts "'#{config_file_name}' does not exist; creating it from '#{config_file_name}.example'."
+        FileUtils.cp(config_file_path + '.example', config_file_path)
+      end
       require 'yaml'
       require 'ostruct'
-      OpenStruct.new(YAML.load_file(File.join(File.dirname(__FILE__), 'config.yml')))
+      OpenStruct.new(YAML.load_file(config_file_path))
     end
   end
 

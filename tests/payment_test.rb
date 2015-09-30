@@ -28,7 +28,7 @@ class PaymentTest < NibleyTest
       
       confirmation_of_oder
       
-      # searching by sku#
+      #searching by sku#
       browser.text_field(name: "keywords").set '5080130'
       browser.input(class: "btn btn-primary img-responsive js-search-button").click
       assert(browser.h1(text: "Search results for '5080130'").exists?)
@@ -38,13 +38,13 @@ class PaymentTest < NibleyTest
       from_cart_to_payment
 
       apply_gift_card
-
-      browser.text_field(id: "gift_card_number_5").set '50000020'
+      amount = get_new_gift_card_number(20)
+      browser.text_field(id: "gift_card_number_5").set amount
       browser.button(class: "btn btn-primary js-apply-gift-card-btn").click
       
       apply_gift_card
-
-      browser.text_field(id: "gift_card_number_5").set '500012.94'
+      amount = get_new_gift_card_number(12.94)
+      browser.text_field(id: "gift_card_number_5").set amount
       
       gift_card_confirmation
   
@@ -66,7 +66,8 @@ class PaymentTest < NibleyTest
 
       apply_gift_card
 
-      browser.text_field(id: "gift_card_number_5").set '500022.94'
+      amount = get_new_gift_card_number(22.94)
+      browser.text_field(id: "gift_card_number_5").set amount
       
       gift_card_confirmation
       

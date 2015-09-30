@@ -59,4 +59,5 @@ DEPENDENCIES
   minitest-reporters
   pry-byebug
   rake
+  ruby-progressbar
   watir-webdriver

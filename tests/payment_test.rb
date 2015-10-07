@@ -269,11 +269,11 @@ include StandardCheckoutHelper
   end
 
   def delivery_options
-      assert_equal("#{main_url}/checkout/address", browser.url, "incorrect location")
-      browser.button(class: "btn btn-primary pull-right js-form-validate btn-continue").click
-      assert_equal("#{main_url}/checkout/delivery", browser.url, "incorrect location")
-      browser.button(class: "btn btn-primary pull-right btn-continue").click
-      assert_equal("#{main_url}/checkout/payment", browser.url, "incorrect location")
+    assert_equal("#{main_url}/checkout/address", browser.url, "incorrect location")
+    browser.button(class: "btn btn-primary pull-right js-form-validate btn-continue").click
+    assert_equal("#{main_url}/checkout/delivery", browser.url, "incorrect location")
+    browser.button(class: "btn btn-primary pull-right btn-continue").click
+    assert_equal("#{main_url}/checkout/payment", browser.url, "incorrect location")
   end
 
   def finding_sum

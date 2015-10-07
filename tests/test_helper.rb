@@ -66,6 +66,10 @@ class NibleyTest < Minitest::Test
   def teardown
   end
 
+  def main_url
+    config.main_url
+  end
+
   def base_url
     config.base_url
   end

@@ -82,6 +82,16 @@ include StandardCheckoutHelper
     amount = get_new_gift_card_number(1)
     browser.text_field(id: "gift_card_number_5").set amount
     browser.button(class: "btn btn-primary js-apply-gift-card-btn").click
+    sum = browser.span(id: "summary-order-total").text 
+    sum = sum.gsub(/[^0-9\.]/, '').to_f
+
+    apply_gift_card
+    browser.text_field(id: "gift_card_number_5").set amount
+    browser.button(class: "btn btn-primary js-apply-gift-card-btn").click
+    sum2 = browser.span(id: "summary-order-total").text 
+    sum2 = sum2.gsub(/[^0-9\.]/, '').to_f
+    assert_equal(sum, sum2, "You entered valid gift card twice, and it applayed, its bad!")
+    
     browser.button(class: "btn btn-primary pull-right btn-continue js-submit-btn").click
     assert(
     browser.strong(text: '1 error prohibited this record from being saved').exists?,
@@ -127,6 +137,13 @@ include StandardCheckoutHelper
   end
 
   def searching_for_rings
+    browser.text_field(name: "keywords").set 'Heavenly Flower CTR Ring'
+    browser.input(class: "btn btn-primary img-responsive js-search-button").click
+    assert(browser.h1(text: "Search results for 'Heavenly Flower CTR Ring'").exists?)
+    browser.img(alt: "Heavenly Flower CTR Ring").click
+  end
+
+def finding_for_rings
     browser.text_field(name: "keywords").set 'Heavenly Flower CTR Ring'
     browser.input(class: "btn btn-primary img-responsive js-search-button").click
     assert(browser.h1(text: "Search results for 'Heavenly Flower CTR Ring'").exists?)

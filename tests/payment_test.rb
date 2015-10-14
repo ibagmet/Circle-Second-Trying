@@ -27,7 +27,7 @@ include StandardCheckoutHelper
     browser.span(text: "6.5").click
     from_cart_to_payment
     apply_gift_card
-    
+
     finding_sum
 
     apply_gift_card
@@ -90,7 +90,7 @@ include StandardCheckoutHelper
     browser.button(class: "btn btn-primary js-apply-gift-card-btn").click
     sum2 = browser.span(id: "summary-order-total").text 
     sum2 = sum2.gsub(/[^0-9\.]/, '').to_f
-    assert_equal(sum, sum2, "You entered valid gift card twice, and it applayed, its bad!")
+    assert_equal(sum, sum2, "You entered a valid gift card twice, and it applied twice, that's bad!")
     
     browser.button(class: "btn btn-primary pull-right btn-continue js-submit-btn").click
     assert(
@@ -143,7 +143,7 @@ include StandardCheckoutHelper
     browser.img(alt: "Heavenly Flower CTR Ring").click
   end
 
-def finding_for_rings
+  def finding_for_rings
     browser.text_field(name: "keywords").set 'Heavenly Flower CTR Ring'
     browser.input(class: "btn btn-primary img-responsive js-search-button").click
     assert(browser.h1(text: "Search results for 'Heavenly Flower CTR Ring'").exists?)
@@ -307,7 +307,6 @@ def finding_for_rings
     sleep(1) #animation
     sum = browser.span(id: "summary-order-total").text 
     sum = sum.gsub(/[^0-9]/, '').to_i
-    #puts "#{sum}"
     browser.text_field(id: "order_platinum_points").set sum
     browser.button(class: "btn btn-primary js-apply-platinum-points-btn").click
     assert_equal("#{main_url}/checkout/confirm", browser.url, "incorrect location")

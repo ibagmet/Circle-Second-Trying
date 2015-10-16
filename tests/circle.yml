@@ -1,8 +1,15 @@
-dependencies:
-  pre:
-    - gem install bundler --pre
+machine:
+  ruby:
+    version: rbx-2.2.1
 
 dependencies:
   bundler:
     without:
       - development
+
+  experimental:
+  notify:
+    branches:
+      only:
+        - setup_test
+        - write_a_review_test

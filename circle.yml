@@ -1,6 +1,6 @@
 machine:  
   ruby:  
-    version: 2.2.1p85   
+    version: 2.2.1   
   environment:  
     SELENIUM_HOST: deseretbook.com  
     TB_AUTOMATE_PROJECT: "Run on circleCI"  

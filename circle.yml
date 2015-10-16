@@ -1,0 +1,31 @@
+machine:  
+  ruby:  
+    version: 2.2.1p85   
+  environment:  
+    SELENIUM_HOST: deseretbook.com  
+    TB_AUTOMATE_PROJECT: "Run on circleCI"  
+    TB_AUTOMATE_BUILD: "build No. $CIRCLE_BUILD_NUM for circleCI"  
+    SELENIUM_PLATFORM: WINDOWS  
+    SELENIUM_BROWSER: IE  
+
+test:  
+  override:  
+    - bundle exec rake
+
+
+
+
+# general:
+#   build_dir: api
+
+# dependencies:
+#   bundler:
+#     without:
+#       - development
+
+# experimental:
+#   notify:
+#     branches:
+#       only:
+#         - setup_test
+#         - write_a_review_test
